@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F5F4EF">
+<title>Imposter Who</title>
+<style>
+:root {
+  --bg: #F5F4EF;
+  --surface: #FFFFFF;
+  --surface-2: #EFEDE6;
+  --text: #0D0D0D;
+  --text-muted: #6E6B62;
+  --border: #E2DFD4;
+  --olive: #5C6B3D;
+  --olive-dark: #3E4A28;
+  --olive-soft: #E8EBDD;
+  --olive-fog: #F2F4EA;
+  --danger: #7A2828;
+  --warn: #8B6B2E;
+  --chaos: #8B6B2E;
+  --chaos-soft: #F4EEDF;
+  --chaos-border: #C9A96A;
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+body { min-height: 100vh; min-height: 100dvh; }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+button {
+  font-family: inherit;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  border: none;
+  background: none;
+  color: inherit;
+  touch-action: manipulation;
+}
+input { font-family: inherit; font-size: 16px; }
+.app {
+  max-width: 560px;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 14px 16px calc(20px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+.screen { display: none; flex: 1; flex-direction: column; }
+.screen.active { display: flex; animation: fadeSlide .32s var(--ease); }
+@keyframes fadeSlide {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.topbar, .screen-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+  padding: 2px;
+  min-height: 44px;
+  gap: 8px;
+}
+.brand { display: flex; align-items: center; gap: 10px; }
+.logo {
+  width: 32px; height: 32px;
+  border-radius: 10px;
+  background: var(--text);
+  color: white;
+  display: grid; place-items: center;
+  font-family: 'SF Mono', ui-monospace, Menlo, monospace;
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.02em;
+}
+.brand h1 {
+  font-size: 18px; margin: 0; font-weight: 700; letter-spacing: -0.02em;
+}
+.topbar-actions { display: flex; gap: 6px; align-items: center; }
+.lang-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.lang-toggle button {
+  padding: 5px 9px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.lang-toggle button.active { background: var(--text); color: white; }
+.btn-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: grid; place-items: center;
+  font-size: 16px; font-weight: 700; color: var(--text-muted);
+}
+.card {
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 20px;
+  border: 1px solid var(--border);
+}
+.hero { text-align: center; padding: 28px 20px; }
+.hero h2 { margin: 0 0 8px; font-size: 26px; letter-spacing: -0.03em; font-weight: 700; }
+.hero p { margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+.label {
+  font-weight: 700; font-size: 13px; margin: 0 0 10px; display: block;
+}
+.stepper { display: flex; align-items: center; gap: 14px; justify-content: space-between; width: 100%; }
+.step-btn {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: var(--surface-2); border: 1px solid var(--border);
+  font-size: 20px; font-weight: 700; color: var(--text);
+  display: grid; place-items: center;
+}
+.step-btn:active { transform: scale(0.94); }
+.step-val {
+  font-size: 26px; font-weight: 700; min-width: 80px; text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.segmented {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 3px; gap: 3px; flex-wrap: wrap;
+}
+.segmented button {
+  flex: 1; min-width: 0; padding: 9px 6px; border-radius: 7px;
+  font-weight: 700; font-size: 13px; color: var(--text-muted);
+}
+.segmented button.active { background: var(--text); color: white; }
+.segmented button:disabled { opacity: 0.35; cursor: not-allowed; }
+.field { margin-bottom: 18px; }
+.field:last-child { margin-bottom: 0; }
+.note { font-size: 12px; color: var(--text-muted); margin: 8px 0 0; line-height: 1.4; }
+.toggle-row {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 16px; padding: 12px 0;
+}
+.toggle-row + .toggle-row { border-top: 1px solid var(--border); }
+.toggle-text { flex: 1; min-width: 0; }
+.toggle-label { font-weight: 700; font-size: 14px; }
+.toggle-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+.toggle {
+  width: 44px; height: 26px; border-radius: 999px;
+  background: #D6D2C5; position: relative; flex-shrink: 0;
+  transition: background .2s var(--ease);
+}
+.toggle-knob {
+  position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--surface);
+  transition: transform .2s var(--ease);
+}
+.toggle[aria-checked="true"] { background: var(--olive); }
+.toggle[aria-checked="true"] .toggle-knob { transform: translateX(18px); }
+.collapsible {
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface-2); overflow: hidden;
+}
+.collapse-trigger {
+  width: 100%; padding: 13px 14px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-weight: 700; font-size: 14px; text-align: left;
+}
+.chevron { transition: transform .2s var(--ease); font-size: 12px; color: var(--text-muted); }
+.collapsible.open .chevron { transform: rotate(180deg); }
+.collapse-content { display: none; padding: 4px 14px 14px; }
+.collapsible.open .collapse-content { display: block; }
+.names-list { display: flex; flex-direction: column; gap: 8px; }
+.name-input-row { display: flex; align-items: center; gap: 10px; }
+.name-input-row label {
+  font-size: 12px; font-weight: 700; color: var(--text-muted); min-width: 36px;
+}
+.name-input-row input {
+  flex: 1; padding: 9px 11px; border: 1px solid var(--border);
+  border-radius: 8px; font-size: 14px; background: var(--surface);
+  color: var(--text); min-width: 0;
+}
+.name-input-row input:focus { outline: none; border-color: var(--olive); }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 14px 18px; border-radius: 10px; font-weight: 700; font-size: 15px;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border);
+  width: 100%;
+}
+.btn.primary { background: var(--text); color: white; border-color: var(--text); }
+.btn.primary:active { transform: translateY(1px); }
+.btn:disabled { opacity: 0.4; pointer-events: none; }
+.btn.big { padding: 16px; font-size: 16px; border-radius: 12px; }
+.spacer-top { margin-top: auto; padding-top: 14px; }
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(13,13,13,0.5);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  display: none; align-items: flex-end; justify-content: center; z-index: 100;
+}
+.modal-backdrop.active { display: flex; animation: fadeIn .25s var(--ease); }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal {
+  background: var(--surface); width: 100%; max-width: 560px;
+  border-radius: 20px 20px 0 0; padding: 22px;
+  max-height: 88vh; overflow-y: auto;
+  animation: slideUp .32s var(--ease);
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal h3 { margin: 0 0 14px; font-size: 18px; }
+.rules-list {
+  padding-left: 18px; margin: 0 0 22px; line-height: 1.55;
+  color: var(--text-muted); font-size: 14px;
+}
+.rules-list li { margin-bottom: 8px; }
+.rules-list strong { color: var(--text); }
+.progress-dots {
+  display: flex; gap: 8px; justify-content: center; align-items: center;
+  margin: 12px 0;
+}
+.progress-dots .dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--border); transition: all .25s var(--ease);
+}
+.progress-dots .dot.done { background: var(--text); }
+.progress-dots .dot.current {
+  width: 12px; height: 12px; background: var(--olive);
+  animation: dotPulse 1.4s ease-in-out infinite;
+}
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.65; }
+}
+.pass-screen {
+  flex: 1; display: flex; flex-direction: column; text-align: center; padding: 4px 0 8px;
+}
+.pass-content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+.player-num {
+  font-size: 12px; color: var(--text-muted); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px;
+}
+.pass-big {
+  font-size: clamp(22px, 6vw, 30px); font-weight: 700; letter-spacing: -0.02em;
+  margin: 0 0 12px; line-height: 1.15; word-break: break-word;
+}
+.pass-msg { color: var(--text-muted); font-size: 14px; margin: 0; }
+.pass-screen .btn { margin-top: 18px; }
+.role-screen {
+  flex: 1; display: flex; flex-direction: column; text-align: center; padding: 4px 0 8px;
+}
+.role-screen #role-content {
+  flex: 1; display: flex; flex-direction: column; justify-content: center;
+  perspective: 1200px;
+}
+.flip-container { width: 100%; cursor: pointer; }
+.flip-inner {
+  position: relative; width: 100%;
+  transition: transform .45s cubic-bezier(.22,.61,.36,1);
+  transform-style: preserve-3d;
+  display: grid;
+}
+.flip-container.flipped .flip-inner { transform: rotateY(180deg); }
+.flip-front, .flip-back {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-front {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 40px 24px;
+  text-align: center;
+  display: flex; flex-direction: column; justify-content: center; align-items: center;
+  min-height: 260px;
+}
+.flip-front .question-mark {
+  font-size: 64px; font-weight: 800; color: var(--text-muted);
+  line-height: 1; margin-bottom: 14px;
+  font-family: 'SF Mono', ui-monospace, Menlo, monospace;
+}
+.flip-front .tap-hint {
+  font-size: 12px; color: var(--text-muted); font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
+.flip-back {
+  transform: rotateY(180deg);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.flip-container:focus-visible {
+  outline: 2px solid var(--olive); outline-offset: 4px; border-radius: 18px;
+}
+@media (hover: hover) {
+  .flip-container:hover .flip-front { border-color: var(--text-muted); }
+}
+.role-card {
+  border-radius: 18px;
+  padding: 26px 20px;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.role-card.civilian { background: var(--text); color: white; }
+.role-card.imposter { background: var(--olive); color: white; }
+.role-label {
+  font-size: 12px; text-transform: uppercase; letter-spacing: 0.14em;
+  font-weight: 700; margin-bottom: 4px; color: var(--olive-soft);
+}
+.role-title {
+  font-size: 26px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 18px;
+}
+.word-box {
+  border: 1.5px solid rgba(255,255,255,0.28);
+  border-radius: 12px;
+  padding: 18px 12px;
+  margin-top: 8px;
+}
+.word-big {
+  font-size: clamp(38px, 11vw, 58px);
+  font-weight: 700; letter-spacing: -0.03em;
+  word-break: break-word; overflow-wrap: break-word;
+  line-height: 1.05; margin: 4px 0 0;
+}
+.secret-label, .hint-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--olive-soft);
+}
+.reminder {
+  margin: 18px 0 0; font-size: 13px;
+  color: rgba(255,255,255,0.62); font-style: normal;
+}
+.role-footer {
+  display: flex; flex-direction: column; gap: 10px; margin-top: 14px;
+}
+.progress-text {
+  font-size: 12px; color: var(--text-muted); font-weight: 600;
+  margin: 0; text-align: center;
+}
+.clue-order { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 0; }
+.order-chip {
+  padding: 6px 11px; background: var(--surface-2); color: var(--text);
+  border-radius: 999px; font-weight: 700; font-size: 12px;
+}
+.timer-card { text-align: center; padding: 22px 18px; }
+.timer-display {
+  font-family: 'SF Mono', ui-monospace, 'Menlo', monospace;
+  font-size: 56px; font-weight: 700;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.03em;
+  margin: 0; line-height: 1;
+}
+.timer-display.warn { color: var(--warn); }
+.timer-display.danger { color: var(--danger); }
+.timer-controls { display: flex; gap: 10px; margin-top: 18px; }
+.timer-controls .btn { flex: 1; }
+.vote-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin: 0 0 12px;
+}
+.vote-btn {
+  padding: 14px 8px; border-radius: 10px;
+  background: var(--surface); border: 1px solid var(--border);
+  font-weight: 700; font-size: 14px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: var(--text);
+}
+.vote-btn:active { transform: scale(0.96); }
+.vote-btn.selected {
+  background: var(--olive-fog); border-color: var(--olive); color: var(--olive-dark);
+}
+.reveal-title {
+  font-size: 22px; font-weight: 700; margin: 0 0 8px;
+  text-align: center; line-height: 1.2; word-break: break-word;
+}
+.reveal-card { padding: 18px; border-radius: 14px; margin-bottom: 12px; text-align: center; }
+.reveal-card.civ-win { background: var(--text); color: white; }
+.reveal-card.imp-win { background: var(--olive); color: white; }
+.reveal-card.chaos {
+  background: var(--chaos-soft); color: var(--chaos);
+  border: 2px solid var(--chaos-border);
+}
+.reveal-card .muted { color: inherit; opacity: 0.72; }
+.chaos-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.12em; margin-bottom: 6px; color: var(--chaos);
+}
+.real-imposter-line { margin: 10px 0 0; font-weight: 700; font-size: 14px; }
+.word-reveal { display: flex; gap: 10px; margin: 4px 0 12px; }
+.word-reveal .item {
+  flex: 1; padding: 14px; border-radius: 10px;
+  background: var(--surface-2); border: 1px solid var(--border); text-align: center;
+}
+.word-reveal .lbl {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--text-muted); font-weight: 700;
+}
+.word-reveal .val { font-size: 16px; font-weight: 700; margin-top: 4px; word-break: break-word; }
+.imposter-list { text-align: center; font-size: 12px; color: var(--text-muted); margin: 8px 0 0; }
+.chaos-note {
+  text-align: center; font-size: 12px; color: var(--text-muted);
+  font-style: normal; margin: 12px 0 0;
+}
+.scoreboard { display: flex; gap: 10px; margin: 4px 0; }
+.score { text-align: center; padding: 14px; border-radius: 12px; flex: 1; }
+.score.civ { background: var(--text); color: white; }
+.score.imp { background: var(--olive); color: white; }
+.score-num { font-size: 28px; font-weight: 700; line-height: 1; }
+.score-label {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+  font-weight: 700; margin-top: 4px; color: inherit; opacity: 0.7;
+}
+.center-text { text-align: center; }
+.muted { color: var(--text-muted); }
+button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--olive); outline-offset: 2px;
+}
+@media (min-width: 480px) { .vote-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 600px) {
+  .modal-backdrop { align-items: center; }
+  .modal { border-radius: 20px; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SETUP -->
+  <section class="screen active" id="screen-setup" aria-label="Setup">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">IW</div>
+        <h1 data-i18n="app_name">Imposter Who</h1>
+      </div>
+      <div class="topbar-actions">
+        <div class="lang-toggle" role="group" aria-label="Language">
+          <button data-lang="en" class="active" type="button" aria-label="English">EN</button>
+          <button data-lang="nl" type="button" aria-label="Nederlands">NL</button>
+        </div>
+        <button class="btn-icon" id="btn-howto" type="button" data-i18n-aria="how_to_play" aria-label="How to play">?</button>
+      </div>
+    </div>
+
+    <div class="card hero">
+      <h2 data-i18n="tagline">Find the imposter.</h2>
+      <p data-i18n="tagline_sub">One shared phone. A secret word. One player who doesn't know it. Pass, peek, discuss, vote.</p>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="field">
+        <label class="label" data-i18n="players">Players</label>
+        <div class="stepper">
+          <button class="step-btn" id="players-minus" type="button" data-i18n-aria="fewer" aria-label="Fewer">−</button>
+          <div class="step-val" id="player-count" aria-live="polite">5</div>
+          <button class="step-btn" id="players-plus" type="button" data-i18n-aria="more" aria-label="More">+</button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label" data-i18n="imposters">Imposters</label>
+        <div class="segmented" id="imposter-segmented" role="group" aria-label="Imposter count">
+          <button data-imp="1" class="active" type="button">1</button>
+          <button data-imp="2" type="button">2</button>
+        </div>
+        <p class="note" id="imposter-note"></p>
+      </div>
+      <div class="field">
+        <label class="label" data-i18n="discussion_timer">Discussion timer</label>
+        <div class="segmented" id="timer-segmented" role="group" aria-label="Discussion timer">
+          <button data-time="0" type="button" data-i18n="timer_off">Off</button>
+          <button data-time="60" type="button">60s</button>
+          <button data-time="120" class="active" type="button">120s</button>
+          <button data-time="180" type="button">180s</button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label" data-i18n="word_category">Word category</label>
+        <div class="segmented" id="category-segmented" role="group" aria-label="Word category">
+          <button data-cat="objects" class="active" type="button" data-i18n="cat_objects_short">Objects</button>
+          <button data-cat="food" type="button" data-i18n="cat_food_short">Food</button>
+          <button data-cat="animals" type="button" data-i18n="cat_animals_short">Animals</button>
+          <button data-cat="mixed" type="button" data-i18n="cat_mixed_short">Mixed</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="toggle-row">
+        <div class="toggle-text">
+          <div class="toggle-label" data-i18n="hint_toggle">Give imposters a hint</div>
+          <div class="toggle-desc" data-i18n="hint_toggle_desc">When off, imposters get no clue about the word.</div>
+        </div>
+        <button class="toggle" role="switch" aria-checked="true" data-toggle="hintsEnabled" type="button" aria-label="Toggle hints">
+          <span class="toggle-knob"></span>
+        </button>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-text">
+          <div class="toggle-label" data-i18n="chaos_mode">Chaos mode</div>
+          <div class="toggle-desc" data-i18n="chaos_mode_desc">20% chance per round: everyone is told they're the imposter. No points awarded.</div>
+        </div>
+        <button class="toggle" role="switch" aria-checked="false" data-toggle="chaosMode" type="button" aria-label="Toggle chaos mode">
+          <span class="toggle-knob"></span>
+        </button>
+      </div>
+      <div class="collapsible" id="names-collapsible" style="margin-top:12px">
+        <button class="collapse-trigger" id="names-trigger" aria-expanded="false" type="button">
+          <span data-i18n="add_names">Add player names (optional)</span>
+          <span class="chevron" aria-hidden="true">▾</span>
+        </button>
+        <div class="collapse-content">
+          <div id="player-names-list" class="names-list"></div>
+          <p class="note" data-i18n="names_note">Leave blank to use "Player N" defaults.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer-top">
+      <button class="btn primary big" id="btn-start" type="button" data-i18n="start_game">Start Game</button>
+    </div>
+  </section>
+
+  <!-- PASS -->
+  <section class="screen" id="screen-pass" aria-label="Pass the phone">
+    <div class="pass-screen">
+      <div class="pass-content">
+        <div class="player-num" id="pass-player-num"></div>
+        <div class="progress-dots" id="pass-dots"></div>
+        <h2 class="pass-big">
+          <span data-i18n="pass_phone">Pass the phone</span><br>
+          <span id="pass-to-target"></span>
+        </h2>
+        <p class="pass-msg" data-i18n="pass_msg">Make sure nobody else can see the screen.</p>
+      </div>
+      <button class="btn primary big" id="btn-show-role" type="button"><span id="show-role-text"></span></button>
+    </div>
+  </section>
+
+  <!-- ROLE -->
+  <section class="screen" id="screen-role" aria-label="Your role">
+    <div class="role-screen">
+      <div id="role-content"></div>
+      <div class="role-footer">
+        <p class="progress-text" id="role-progress"></p>
+        <div class="progress-dots" id="role-dots"></div>
+        <button class="btn primary big" id="btn-hide-pass" type="button" disabled></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLUE -->
+  <section class="screen" id="screen-clue" aria-label="Discussion phase">
+    <div class="screen-head">
+      <div class="brand"><h1 data-i18n="discussion">Discussion</h1></div>
+      <button class="btn-icon" data-quit type="button" data-i18n-aria="quit_game" aria-label="Quit game">×</button>
+    </div>
+    <div class="card">
+      <p class="label" data-i18n="clue_order">Clue order — one word each, in order:</p>
+      <div class="clue-order" id="clue-order"></div>
+    </div>
+    <div class="card timer-card" id="timer-card" style="margin-top:12px">
+      <p class="timer-display" id="timer-display" aria-live="polite">2:00</p>
+      <div class="timer-controls">
+        <button class="btn primary" id="btn-timer-toggle" type="button"></button>
+        <button class="btn" id="btn-timer-skip" type="button" data-i18n="skip_timer">Skip timer</button>
+      </div>
+    </div>
+    <div id="clue-vote-wrap" class="spacer-top" style="display:none">
+      <button class="btn primary big" id="btn-go-vote" type="button" data-i18n="go_to_voting">Go to Voting</button>
+    </div>
+  </section>
+
+  <!-- VOTE -->
+  <section class="screen" id="screen-vote" aria-label="Voting">
+    <div class="screen-head">
+      <div class="brand"><h1 data-i18n="who_imposter">Who's the imposter?</h1></div>
+      <button class="btn-icon" data-quit type="button" data-i18n-aria="quit_game" aria-label="Quit game">×</button>
+    </div>
+    <div class="card">
+      <p class="muted center-text" id="vote-instruction" style="margin:0 0 12px"></p>
+      <div class="vote-grid" id="vote-grid"></div>
+      <button class="btn" id="btn-vote-nobody" type="button" style="margin-top:4px" data-i18n="nobody_voted">Nobody was voted out</button>
+      <div id="confirm-wrap" style="margin-top:14px; display:none">
+        <p id="confirm-text" class="center-text" style="font-weight:700; margin:0 0 10px"></p>
+        <div style="display:flex; gap:8px">
+          <button class="btn" id="btn-confirm-cancel" type="button" style="flex:1" data-i18n="cancel">Cancel</button>
+          <button class="btn primary" id="btn-confirm-reveal" type="button" style="flex:1" data-i18n="reveal_result">Reveal result</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVEAL -->
+  <section class="screen" id="screen-reveal" aria-label="Round result">
+    <div class="screen-head">
+      <div class="brand"><h1 data-i18n="round_over">Round Over</h1></div>
+      <button class="btn-icon" data-quit type="button" data-i18n-aria="quit_game" aria-label="Quit game">×</button>
+    </div>
+    <div class="card" id="reveal-content"></div>
+    <div class="card" style="margin-top:12px">
+      <div class="scoreboard">
+        <div class="score civ">
+          <div class="score-num" id="civ-score">0</div>
+          <div class="score-label" data-i18n="civilians_label">Civilians</div>
+        </div>
+        <div class="score imp">
+          <div class="score-num" id="imp-score">0</div>
+          <div class="score-label" data-i18n="imposters_label">Imposters</div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer-top">
+      <button class="btn primary big" id="btn-next-round" type="button" data-i18n="next_round">Next Round</button>
+      <button class="btn" id="btn-end-game" type="button" style="margin-top:8px" data-i18n="end_game">End Game</button>
+    </div>
+  </section>
+
+  <!-- GAME OVER -->
+  <section class="screen" id="screen-gameover" aria-label="Game over">
+    <div class="topbar">
+      <div class="brand"><h1 data-i18n="game_over">Game Over</h1></div>
+    </div>
+    <div class="card hero">
+      <h2 id="gameover-title">Civilians Win!</h2>
+      <p id="gameover-sub" class="muted" data-i18n="final_scoreboard">Final scoreboard</p>
+    </div>
+    <div class="card" style="margin-top:12px">
+      <div class="scoreboard">
+        <div class="score civ">
+          <div class="score-num" id="final-civ">0</div>
+          <div class="score-label" data-i18n="civilians_label">Civilians</div>
+        </div>
+        <div class="score imp">
+          <div class="score-num" id="final-imp">0</div>
+          <div class="score-label" data-i18n="imposters_label">Imposters</div>
+        </div>
+      </div>
+    </div>
+    <div class="spacer-top">
+      <button class="btn primary big" id="btn-play-again" type="button" data-i18n="play_again">Play Again</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- HOW TO PLAY MODAL -->
+<div class="modal-backdrop" id="modal-howto" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h3 data-i18n="howto_title">How to Play</h3>
+    <ol class="rules-list">
+      <li data-i18n="howto_setup"></li>
+      <li data-i18n="howto_roles"></li>
+      <li data-i18n="howto_pass"></li>
+      <li data-i18n="howto_clues"></li>
+      <li data-i18n="howto_discuss"></li>
+      <li data-i18n="howto_vote"></li>
+      <li data-i18n="howto_win"></li>
+      <li data-i18n="howto_chaos"></li>
+    </ol>
+    <button class="btn primary" id="btn-howto-close" type="button" data-i18n="got_it">Got it</button>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-backdrop" id="modal-confirm" role="dialog" aria-modal="true">
+  <div class="modal">
+    <h3 id="confirm-title">Are you sure?</h3>
+    <p id="confirm-body" class="muted" style="margin:0 0 4px; line-height:1.5"></p>
+    <div style="display:flex; gap:8px; margin-top:18px">
+      <button class="btn" id="btn-modal-cancel" type="button" style="flex:1" data-i18n="cancel">Cancel</button>
+      <button class="btn primary" id="btn-modal-ok" type="button" style="flex:1" data-i18n="confirm">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   WORD DATA — English
+   Internal category keys: "objects", "food", "animals", "mixed"
+   ============================================================ */
+const CATEGORIES_EN = {
+  objects: [
+    { word: "Toothbrush", hint: "Bathroom" }, { word: "Umbrella", hint: "Rain" },
+    { word: "Refrigerator", hint: "Cold" }, { word: "Scissors", hint: "Paper" },
+    { word: "Pillow", hint: "Sleep" }, { word: "Mirror", hint: "Reflection" },
+    { word: "Wallet", hint: "Money" }, { word: "Lamp", hint: "Light" },
+    { word: "Kettle", hint: "Tea" }, { word: "Chair", hint: "Sit" },
+    { word: "Spoon", hint: "Soup" }, { word: "Backpack", hint: "School" },
+    { word: "Keys", hint: "Door" }, { word: "Clock", hint: "Time" },
+    { word: "Broom", hint: "Sweep" }, { word: "Sponge", hint: "Clean" },
+    { word: "Towel", hint: "Dry" }, { word: "Candle", hint: "Wax" },
+    { word: "Ladder", hint: "Climb" }, { word: "Bucket", hint: "Water" },
+    { word: "Remote", hint: "Television" }, { word: "Charger", hint: "Battery" },
+    { word: "Stapler", hint: "Office" }, { word: "Envelope", hint: "Mail" },
+    { word: "Hanger", hint: "Closet" }, { word: "Mop", hint: "Wet" },
+    { word: "Blender", hint: "Smoothie" }, { word: "Flashlight", hint: "Dark" },
+    { word: "Sunglasses", hint: "Sun" }, { word: "Vacuum", hint: "Dust" }
+  ],
+  food: [
+    { word: "Pizza", hint: "Italy" }, { word: "Sushi", hint: "Raw" },
+    { word: "Coffee", hint: "Morning" }, { word: "Burger", hint: "Grill" },
+    { word: "Donut", hint: "Sweet" }, { word: "Taco", hint: "Mexico" },
+    { word: "Salad", hint: "Greens" }, { word: "Banana", hint: "Yellow" },
+    { word: "Apple", hint: "Orchard" }, { word: "Bread", hint: "Bakery" },
+    { word: "Cheese", hint: "Melt" }, { word: "Wine", hint: "Vineyard" },
+    { word: "Lemon", hint: "Sour" }, { word: "Cookie", hint: "Dunk" },
+    { word: "Ice Cream", hint: "Cold" }, { word: "Steak", hint: "Sizzle" },
+    { word: "Pancake", hint: "Syrup" }, { word: "Popcorn", hint: "Movie" },
+    { word: "Yogurt", hint: "Breakfast" }, { word: "Carrot", hint: "Orange" },
+    { word: "Mango", hint: "Tropical" }, { word: "Pretzel", hint: "Knot" }
+  ],
+  animals: [
+    { word: "Elephant", hint: "Trunk" }, { word: "Penguin", hint: "Ice" },
+    { word: "Dolphin", hint: "Ocean" }, { word: "Kangaroo", hint: "Pouch" },
+    { word: "Owl", hint: "Night" }, { word: "Cheetah", hint: "Spots" },
+    { word: "Octopus", hint: "Arms" }, { word: "Giraffe", hint: "Tall" },
+    { word: "Snake", hint: "Slither" }, { word: "Hedgehog", hint: "Spikes" },
+    { word: "Bat", hint: "Cave" }, { word: "Panda", hint: "Asia" },
+    { word: "Lion", hint: "Mane" }, { word: "Turtle", hint: "Shell" },
+    { word: "Zebra", hint: "Stripes" }, { word: "Whale", hint: "Song" },
+    { word: "Frog", hint: "Lily" }, { word: "Camel", hint: "Desert" },
+    { word: "Koala", hint: "Eucalyptus" }, { word: "Rabbit", hint: "Burrow" },
+    { word: "Crocodile", hint: "River" }, { word: "Parrot", hint: "Feathers" }
+  ]
+};
+
+/* ============================================================
+   WORD DATA — Dutch
+   ============================================================ */
+const CATEGORIES_NL = {
+  objects: [
+    { word: "Tandenborstel", hint: "Badkamer" }, { word: "Paraplu", hint: "Regen" },
+    { word: "Koelkast", hint: "Koud" }, { word: "Schaar", hint: "Papier" },
+    { word: "Kussen", hint: "Slaap" }, { word: "Spiegel", hint: "Reflectie" },
+    { word: "Portemonnee", hint: "Geld" }, { word: "Lamp", hint: "Licht" },
+    { word: "Waterkoker", hint: "Thee" }, { word: "Stoel", hint: "Zit" },
+    { word: "Lepel", hint: "Soep" }, { word: "Rugzak", hint: "School" },
+    { word: "Sleutels", hint: "Deur" }, { word: "Klok", hint: "Tijd" },
+    { word: "Bezem", hint: "Vegen" }, { word: "Spons", hint: "Schoon" },
+    { word: "Handdoek", hint: "Droog" }, { word: "Kaars", hint: "Was" },
+    { word: "Ladder", hint: "Klim" }, { word: "Emmer", hint: "Water" },
+    { word: "Afstandsbediening", hint: "Televisie" }, { word: "Oplader", hint: "Batterij" },
+    { word: "Nietmachine", hint: "Kantoor" }, { word: "Envelop", hint: "Post" },
+    { word: "Kleerhanger", hint: "Kast" }, { word: "Dweil", hint: "Nat" },
+    { word: "Blender", hint: "Smoothie" }, { word: "Zaklamp", hint: "Donker" },
+    { word: "Zonnebril", hint: "Zon" }, { word: "Stofzuiger", hint: "Stof" }
+  ],
+  food: [
+    { word: "Pizza", hint: "Italië" }, { word: "Sushi", hint: "Rauw" },
+    { word: "Koffie", hint: "Ochtend" }, { word: "Hamburger", hint: "Grill" },
+    { word: "Donut", hint: "Zoet" }, { word: "Taco", hint: "Mexico" },
+    { word: "Salade", hint: "Groenten" }, { word: "Banaan", hint: "Geel" },
+    { word: "Appel", hint: "Boomgaard" }, { word: "Brood", hint: "Bakker" },
+    { word: "Kaas", hint: "Smelt" }, { word: "Wijn", hint: "Wijngaard" },
+    { word: "Citroen", hint: "Zuur" }, { word: "Koekje", hint: "Doop" },
+    { word: "IJsje", hint: "Koud" }, { word: "Biefstuk", hint: "Sizzle" },
+    { word: "Pannenkoek", hint: "Stroop" }, { word: "Popcorn", hint: "Film" },
+    { word: "Yoghurt", hint: "Ontbijt" }, { word: "Wortel", hint: "Oranje" },
+    { word: "Mango", hint: "Tropisch" }, { word: "Pretzel", hint: "Knopen" }
+  ],
+  animals: [
+    { word: "Olifant", hint: "Slurf" }, { word: "Pinguïn", hint: "IJs" },
+    { word: "Dolfijn", hint: "Oceaan" }, { word: "Kangoeroe", hint: "Buidel" },
+    { word: "Uil", hint: "Nacht" }, { word: "Cheetah", hint: "Vlekken" },
+    { word: "Octopus", hint: "Tentakels" }, { word: "Giraffe", hint: "Lang" },
+    { word: "Slang", hint: "Glibberig" }, { word: "Egeltje", hint: "Stekels" },
+    { word: "Vleermuis", hint: "Grot" }, { word: "Panda", hint: "Azië" },
+    { word: "Leeuw", hint: "Manen" }, { word: "Schildpad", hint: "Schild" },
+    { word: "Zebra", hint: "Strepen" }, { word: "Walvis", hint: "Zee" },
+    { word: "Kikker", hint: "Vijver" }, { word: "Kameel", hint: "Woestijn" },
+    { word: "Koala", hint: "Eucalyptus" }, { word: "Konijn", hint: "Hol" },
+    { word: "Krokodil", hint: "Rivier" }, { word: "Papegaai", hint: "Veren" }
+  ]
+};
+
+const CATEGORY_KEYS = ['objects', 'food', 'animals'];
+
+/* ============================================================
+   LOCALES (i18n)
+   ============================================================ */
+const LOCALES = {
+  en: {
+    app_name: 'Imposter Who',
+    tagline: 'Find the imposter.',
+    tagline_sub: "One shared phone. A secret word. One player who doesn't know it. Pass, peek, discuss, vote.",
+    players: 'Players', imposters: 'Imposters',
+    discussion_timer: 'Discussion timer', word_category: 'Word category',
+    timer_off: 'Off',
+    cat_objects_short: 'Objects', cat_food_short: 'Food', cat_animals_short: 'Animals', cat_mixed_short: 'Mixed',
+    hint_toggle: 'Give imposters a hint',
+    hint_toggle_desc: "When off, imposters get no clue about the word.",
+    chaos_mode: 'Chaos mode',
+    chaos_mode_desc: "20% chance per round: everyone is told they're the imposter. No points awarded.",
+    add_names: 'Add player names (optional)',
+    names_note: 'Leave blank to use "Player N" defaults.',
+    start_game: 'Start Game', how_to_play: 'How to play', howto_title: 'How to Play', got_it: 'Got it',
+    fewer: 'Fewer players', more: 'More players',
+    pass_phone: 'Pass the phone',
+    pass_to_name_fmt: 'to {name}',
+    pass_msg: 'Make sure nobody else can see the screen.',
+    player_of_fmt: 'Player {x} of {y}',
+    im_show_role_fmt: "I'm {name} — Show My Role",
+    tap_reveal: 'Tap to reveal your role',
+    you_are_civilian: 'You are a', civilian: 'CIVILIAN',
+    you_are_imposter: 'You are the', imposter: 'IMPOSTER',
+    secret_word: 'Secret word', your_hint: 'Your hint',
+    reminder_civilian: "Don't say the word out loud.",
+    reminder_imposter: "Act natural — don't get caught.",
+    hide_pass: 'Hide & Pass', start_discussion: 'Start Discussion',
+    players_seen_fmt: '{x} of {n} players have seen their role',
+    discussion: 'Discussion',
+    clue_order: 'Clue order — one word each, in order:',
+    start: 'Start', pause: 'Pause', resume: 'Resume', done: 'Done',
+    skip_timer: 'Skip timer', go_to_voting: 'Go to Voting',
+    who_imposter: "Who's the imposter?",
+    tap_voted: 'Tap the player the group voted out.',
+    nobody_voted: 'Nobody was voted out',
+    vote_out_fmt: 'Vote out {name}?',
+    nobody_reveal: 'Nobody was voted out. Reveal result?',
+    reveal_result: 'Reveal result', cancel: 'Cancel',
+    round_over: 'Round Over', next_round: 'Next Round', end_game: 'End Game',
+    game_over: 'Game Over',
+    civilians_win: 'Civilians Win!', imposters_win: 'Imposters Win!', its_tie: "It's a tie!",
+    play_again: 'Play Again',
+    quit_game: 'Quit game?',
+    quit_body: 'This will end the current game and return to setup. Scores will be lost.',
+    confirm: 'Confirm', are_you_sure: 'Are you sure?',
+    chaos_round: 'Chaos Round',
+    chaos_everyone: 'EVERYONE WAS THE IMPOSTER',
+    chaos_told: 'Everyone was told they were the imposter!',
+    real_imposter_was: 'The real imposter was',
+    real_imposters_were: 'The real imposters were',
+    chaos_no_points: 'No points awarded this round.',
+    nobody_voted_out: 'Nobody was voted out',
+    imposters_win_round: 'Imposters win the round — no imposter was caught.',
+    was_imposter_fmt: '{name} was an IMPOSTER!',
+    was_civilian_fmt: '{name} was a Civilian.',
+    civilians_win_round: 'Civilians win the round.',
+    imposter_was_label: 'Imposter was', imposters_were_label: 'Imposters were',
+    civilians_label: 'Civilians', imposters_label: 'Imposters',
+    final_scoreboard: 'Final scoreboard',
+    rounds_played_fmt: 'Civilians {civ} · Imposters {imp} across {rounds} {roundsWord}',
+    round_singular: 'round', round_plural: 'rounds',
+    two_imposters_requires: 'Two imposters requires at least 5 players.',
+    both_imposters_hint: 'Both imposters will see the same hint.',
+    enable_second: 'With 5+ players, you can enable a second imposter.',
+    howto_setup: '<strong>Setup:</strong> Pick 3–20 players sharing one device.',
+    howto_roles: '<strong>Roles:</strong> Most players are <strong>Civilians</strong> who see a secret word. One (or two, in bigger groups) is the <strong>Imposter</strong>, who only sees a related hint (if hints are on).',
+    howto_pass: '<strong>Pass &amp; peek:</strong> Each player privately views their role. Don\'t let anyone else see.',
+    howto_clues: '<strong>Clues:</strong> In the order shown, each player says <strong>one word</strong> as a clue. Never say the secret word.',
+    howto_discuss: '<strong>Discuss:</strong> Talk it out and figure out who doesn\'t know the word.',
+    howto_vote: '<strong>Vote:</strong> Tap the suspected imposter, or choose "Nobody".',
+    howto_win: '<strong>Win:</strong> Civilians win the round if an imposter is voted out. Otherwise, imposters win.',
+    howto_chaos: '<strong>Chaos mode (optional):</strong> Some rounds, everyone is told they\'re the imposter. No points awarded — pure mischief.'
+  },
+  nl: {
+    app_name: 'Wie is de Bedrieger',
+    tagline: 'Vind de bedrieger.',
+    tagline_sub: 'Eén gedeelde telefoon. Een geheim woord. Eén speler die het niet kent. Geef door, kijk, overleg, stem.',
+    players: 'Spelers', imposters: 'Bedriegers',
+    discussion_timer: 'Discussietijd', word_category: 'Woordcategorie',
+    timer_off: 'Uit',
+    cat_objects_short: 'Voorwerp', cat_food_short: 'Eten', cat_animals_short: 'Dier', cat_mixed_short: 'Gemengd',
+    hint_toggle: 'Geef bedriegers een hint',
+    hint_toggle_desc: 'Wanneer uit, krijgen bedriegers geen aanwijzing over het woord.',
+    chaos_mode: 'Chaosmodus',
+    chaos_mode_desc: '20% kans per ronde: iedereen wordt verteld dat ze de bedrieger zijn. Geen punten toegekend.',
+    add_names: 'Spelersnamen toevoegen (optioneel)',
+    names_note: 'Laat leeg om "Speler N" te gebruiken.',
+    start_game: 'Start spel', how_to_play: 'Hoe te spelen', howto_title: 'Hoe te spelen', got_it: 'Begrepen',
+    fewer: 'Minder spelers', more: 'Meer spelers',
+    pass_phone: 'Geef de telefoon door',
+    pass_to_name_fmt: 'aan {name}',
+    pass_msg: 'Zorg dat niemand anders het scherm kan zien.',
+    player_of_fmt: 'Speler {x} van {y}',
+    im_show_role_fmt: 'Ik ben {name} — Toon mijn rol',
+    tap_reveal: 'Tik om je rol te onthullen',
+    you_are_civilian: 'Jij bent een', civilian: 'BURGER',
+    you_are_imposter: 'Jij bent de', imposter: 'BEDRIEGER',
+    secret_word: 'Geheim woord', your_hint: 'Jouw hint',
+    reminder_civilian: 'Zeg het woord niet hardop.',
+    reminder_imposter: 'Doe normaal — laat je niet pakken.',
+    hide_pass: 'Verberg & geef door', start_discussion: 'Start discussie',
+    players_seen_fmt: '{x} van {n} spelers hebben hun rol gezien',
+    discussion: 'Discussie',
+    clue_order: 'Hintvolgorde — één woord per persoon, op volgorde:',
+    start: 'Start', pause: 'Pauze', resume: 'Hervatten', done: 'Klaar',
+    skip_timer: 'Timer overslaan', go_to_voting: 'Naar stemmen',
+    who_imposter: 'Wie is de bedrieger?',
+    tap_voted: 'Tik op de speler die is weggestemd.',
+    nobody_voted: 'Niemand weggestemd',
+    vote_out_fmt: '{name} wegstemmen?',
+    nobody_reveal: 'Niemand weggestemd. Resultaat onthullen?',
+    reveal_result: 'Onthul resultaat', cancel: 'Annuleren',
+    round_over: 'Ronde voorbij', next_round: 'Volgende ronde', end_game: 'Eindig spel',
+    game_over: 'Spel voorbij',
+    civilians_win: 'Burgers winnen!', imposters_win: 'Bedriegers winnen!', its_tie: 'Gelijkspel!',
+    play_again: 'Opnieuw spelen',
+    quit_game: 'Spel verlaten?',
+    quit_body: 'Dit beëindigt het huidige spel en keert terug naar de instellingen. Scores gaan verloren.',
+    confirm: 'Bevestigen', are_you_sure: 'Weet je het zeker?',
+    chaos_round: 'Chaosronde',
+    chaos_everyone: 'IEDEREEN WAS DE BEDRIEGER',
+    chaos_told: 'Iedereen werd verteld dat ze de bedrieger waren!',
+    real_imposter_was: 'De echte bedrieger was',
+    real_imposters_were: 'De echte bedriegers waren',
+    chaos_no_points: 'Deze ronde worden geen punten toegekend.',
+    nobody_voted_out: 'Niemand weggestemd',
+    imposters_win_round: 'Bedriegers winnen de ronde — geen bedrieger gepakt.',
+    was_imposter_fmt: '{name} was een BEDRIEGER!',
+    was_civilian_fmt: '{name} was een Burger.',
+    civilians_win_round: 'Burgers winnen de ronde.',
+    imposter_was_label: 'Bedrieger was', imposters_were_label: 'Bedriegers waren',
+    civilians_label: 'Burgers', imposters_label: 'Bedriegers',
+    final_scoreboard: 'Eindstand',
+    rounds_played_fmt: 'Burgers {civ} · Bedriegers {imp} in {rounds} {roundsWord}',
+    round_singular: 'ronde', round_plural: 'ronden',
+    two_imposters_requires: 'Twee bedriegers vereist minimaal 5 spelers.',
+    both_imposters_hint: 'Beide bedriegers zien dezelfde hint.',
+    enable_second: 'Met 5+ spelers kun je een tweede bedrieger inschakelen.',
+    howto_setup: '<strong>Instelling:</strong> Kies 3–20 spelers die één apparaat delen.',
+    howto_roles: '<strong>Rollen:</strong> De meeste spelers zijn <strong>Burgers</strong> die een geheim woord zien. Eén (of twee, bij grotere groepen) is de <strong>Bedrieger</strong>, die alleen een gerelateerde hint ziet (als hints aan staan).',
+    howto_pass: '<strong>Doorgeven &amp; kijken:</strong> Elke speler bekijkt zijn rol privé. Laat niemand anders meekijken.',
+    howto_clues: '<strong>Hints:</strong> In de getoonde volgorde zegt elke speler <strong>één woord</strong> als hint. Zeg nooit het geheime woord.',
+    howto_discuss: '<strong>Overleg:</strong> Bespreek en probeer te ontdekken wie het woord niet kent.',
+    howto_vote: '<strong>Stem:</strong> Tik op de verdachte bedrieger, of kies "Niemand".',
+    howto_win: '<strong>Winnen:</strong> Burgers winnen de ronde als een bedrieger wordt weggestemd. Anders winnen de bedriegers.',
+    howto_chaos: '<strong>Chaosmodus (optioneel):</strong> Sommige ronden wordt iedereen verteld dat ze de bedrieger zijn. Geen punten — pure misleiding.'
+  }
+};
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const STORAGE_KEY = 'imposter-who-settings-v3';
+const TIMER_OPTIONS = [0, 60, 120, 180];
+const DEFAULTS = {
+  playerCount: 5, imposterCount: 1, discussionTimer: 120,
+  category: 'objects', chaosMode: false, hintsEnabled: true,
+  playerNames: [], language: 'en'
+};
+
+const state = {
+  screen: 'setup',
+  settings: { ...DEFAULTS, playerNames: [] },
+  game: null,
+  prevWord: null,
+  prevImposters: [],
+  roleFlipped: false
+};
+
+function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
+function detectLanguage() {
+  try {
+    const l = (navigator.language || 'en').toLowerCase();
+    if (l.startsWith('nl')) return 'nl';
+  } catch (e) {}
+  return 'en';
+}
+function t(key, vars) {
+  let str = (LOCALES[state.settings.language] || LOCALES.en)[key] || key;
+  if (vars) {
+    for (const k in vars) str = str.split('{' + k + '}').join(vars[k]);
+  }
+  return str;
+}
+
+function loadSettings() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      state.settings.language = detectLanguage();
+      return;
+    }
+    const s = JSON.parse(raw);
+    const pc = clamp(parseInt(s.playerCount, 10) || DEFAULTS.playerCount, 3, 20);
+    let ic = parseInt(s.imposterCount, 10) === 2 ? 2 : 1;
+    if (ic === 2 && pc < 5) ic = 1;
+    const tval = TIMER_OPTIONS.includes(parseInt(s.discussionTimer, 10))
+      ? parseInt(s.discussionTimer, 10) : DEFAULTS.discussionTimer;
+    const oldMap = { 'Everyday Objects':'objects', 'Food & Drink':'food', 'Animals':'animals', 'Mixed (any)':'mixed' };
+    let cat = oldMap[s.category] || s.category;
+    if (!CATEGORY_KEYS.includes(cat) && cat !== 'mixed') cat = DEFAULTS.category;
+    const lang = ['en','nl'].includes(s.language) ? s.language : detectLanguage();
+    let names = Array.isArray(s.playerNames) ? s.playerNames.slice(0, pc) : [];
+    while (names.length < pc) names.push('');
+    state.settings = {
+      playerCount: pc, imposterCount: ic, discussionTimer: tval,
+      category: cat, chaosMode: !!s.chaosMode,
+      hintsEnabled: s.hintsEnabled !== false,
+      playerNames: names, language: lang
+    };
+  } catch (e) {
+    state.settings.language = detectLanguage();
+  }
+}
+function saveSettings() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state.settings)); } catch (e) {}
+}
+
+/* ============================================================
+   SCREEN MANAGEMENT
+   ============================================================ */
+const SCREENS = ['setup','pass','role','clue','vote','reveal','gameover'];
+function showScreen(name) {
+  state.screen = name;
+  SCREENS.forEach(s => {
+    const el = document.getElementById('screen-' + s);
+    if (el) el.classList.toggle('active', s === name);
+  });
+  window.scrollTo(0, 0);
+}
+
+/* ============================================================
+   NAME HELPERS
+   ============================================================ */
+function playerName(num) {
+  const names = state.settings.playerNames || [];
+  const n = names[num - 1];
+  if (n && n.trim()) return n.trim();
+  return t('player_of_fmt', { x: num, y: '' }).replace(/ \d+$/, '').trim() || (state.settings.language === 'nl' ? 'Speler ' + num : 'Player ' + num);
+}
+function truncateStr(s, max) { return s.length > max ? s.slice(0, max - 1) + '…' : s; }
+function shortName(num, max = 14) { return truncateStr(playerName(num), max); }
+function imposterNamesStr(arr) { return arr.map(playerName).join(', '); }
+
+/* ============================================================
+   i18n APPLY
+   ============================================================ */
+function applyTranslations() {
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.innerHTML = t(el.getAttribute('data-i18n'));
+  });
+  document.querySelectorAll('[data-i18n-aria]').forEach(el => {
+    el.setAttribute('aria-label', t(el.getAttribute('data-i18n-aria')));
+  });
+  document.documentElement.lang = state.settings.language;
+  document.title = t('app_name');
+}
+function updateLangToggle() {
+  document.querySelectorAll('.lang-toggle button').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === state.settings.language);
+  });
+}
+function changeLanguage(lang) {
+  if (lang === state.settings.language) return;
+  state.settings.language = lang;
+  saveSettings();
+  applyTranslations();
+  renderSetup();
+  renderPlayerNames();
+  updateLangToggle();
+}
+
+/* ============================================================
+   SETUP RENDERING
+   ============================================================ */
+function renderSetup() {
+  const { playerCount, imposterCount, discussionTimer, category } = state.settings;
+  document.getElementById('player-count').textContent = playerCount;
+  const canTwo = playerCount >= 5;
+  document.querySelectorAll('#imposter-segmented button').forEach(b => {
+    const v = parseInt(b.dataset.imp, 10);
+    b.classList.toggle('active', v === imposterCount);
+    b.disabled = (v === 2 && !canTwo);
+  });
+  const note = document.getElementById('imposter-note');
+  if (!canTwo) note.textContent = t('two_imposters_requires');
+  else if (imposterCount === 2) note.textContent = t('both_imposters_hint');
+  else note.textContent = t('enable_second');
+  document.querySelectorAll('#timer-segmented button').forEach(b => {
+    const v = parseInt(b.dataset.time, 10);
+    b.classList.toggle('active', v === discussionTimer);
+  });
+  document.querySelectorAll('#category-segmented button').forEach(b => {
+    b.classList.toggle('active', b.dataset.cat === category);
+  });
+  renderToggles();
+}
+function renderToggles() {
+  const c = document.querySelector('[data-toggle="chaosMode"]');
+  if (c) c.setAttribute('aria-checked', String(state.settings.chaosMode));
+  const h = document.querySelector('[data-toggle="hintsEnabled"]');
+  if (h) h.setAttribute('aria-checked', String(state.settings.hintsEnabled));
+}
+function syncPlayerNamesLength() {
+  const names = state.settings.playerNames || [];
+  while (names.length < state.settings.playerCount) names.push('');
+  names.length = state.settings.playerCount;
+  state.settings.playerNames = names;
+}
+function renderPlayerNames() {
+  syncPlayerNamesLength();
+  const list = document.getElementById('player-names-list');
+  list.innerHTML = '';
+  const names = state.settings.playerNames;
+  for (let i = 0; i < state.settings.playerCount; i++) {
+    const row = document.createElement('div');
+    row.className = 'name-input-row';
+    const lbl = document.createElement('label');
+    lbl.textContent = 'P' + (i + 1);
+    lbl.setAttribute('for', 'name-input-' + i);
+    const input = document.createElement('input');
+    input.id = 'name-input-' + i;
+    input.type = 'text';
+    input.maxLength = 20;
+    input.placeholder = (state.settings.language === 'nl' ? 'Speler ' : 'Player ') + (i + 1);
+    input.value = names[i] || '';
+    input.dataset.index = i;
+    input.addEventListener('input', e => {
+      state.settings.playerNames[parseInt(e.target.dataset.index, 10)] = e.target.value;
+      saveSettings();
+    });
+    row.appendChild(lbl);
+    row.appendChild(input);
+    list.appendChild(row);
+  }
+}
+function setPlayerCount(delta) {
+  state.settings.playerCount = clamp(state.settings.playerCount + delta, 3, 20);
+  if (state.settings.playerCount < 5 && state.settings.imposterCount === 2) {
+    state.settings.imposterCount = 1;
+  }
+  syncPlayerNamesLength();
+  renderSetup();
+  renderPlayerNames();
+  saveSettings();
+}
+
+/* ============================================================
+   GAME LIFECYCLE
+   ============================================================ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function getCategories() {
+  return state.settings.language === 'nl' ? CATEGORIES_NL : CATEGORIES_EN;
+}
+function getWordPool() {
+  const cats = getCategories();
+  const key = state.settings.category;
+  if (key === 'mixed') {
+    let pool = [];
+    Object.values(cats).forEach(arr => { pool = pool.concat(arr); });
+    return pool;
+  }
+  return cats[key] || cats.objects;
+}
+function pickWord() {
+  const pool = getWordPool().filter(w => w.word !== state.prevWord);
+  const choice = pool[Math.floor(Math.random() * pool.length)];
+  state.prevWord = choice.word;
+  return choice;
+}
+function pickImposters(playerCount, count) {
+  const all = [];
+  for (let i = 1; i <= playerCount; i++) all.push(i);
+  let picks = null;
+  for (let attempt = 0; attempt < 40; attempt++) {
+    const cand = shuffle(all).slice(0, count).sort((a,b) => a - b);
+    if (!cand.some(p => state.prevImposters.includes(p))) { picks = cand; break; }
+  }
+  if (!picks) picks = shuffle(all).slice(0, count).sort((a,b) => a - b);
+  state.prevImposters = picks;
+  return picks;
+}
+function startGame() {
+  const { playerCount, imposterCount, discussionTimer, chaosMode, hintsEnabled, language } = state.settings;
+  state.game = {
+    round: 1, scores: { civ: 0, imp: 0 },
+    playerCount, imposterCount, discussionTimer, chaosMode, hintsEnabled, language,
+    prevChaos: false, current: null
+  };
+  state.prevWord = null;
+  state.prevImposters = [];
+  beginRound();
+}
+function beginRound() {
+  const g = state.game;
+  const wordPair = pickWord();
+  const imposters = pickImposters(g.playerCount, g.imposterCount);
+  const order = shuffle(Array.from({length: g.playerCount}, (_, i) => i + 1));
+  let isChaos = false;
+  if (g.chaosMode && !g.prevChaos && Math.random() < 0.2) isChaos = true;
+  g.prevChaos = isChaos;
+  g.current = { word: wordPair.word, hint: wordPair.hint, imposters, order, seenIndex: 0, isChaos };
+  startPassPhase();
+}
+
+/* ============================================================
+   PASS PHASE
+   ============================================================ */
+function startPassPhase() {
+  const g = state.game;
+  const cur = g.current;
+  const playerNum = cur.order[cur.seenIndex];
+  const total = g.playerCount;
+  const name = playerName(playerNum);
+  document.getElementById('pass-player-num').textContent = t('player_of_fmt', { x: playerNum, y: total });
+  document.getElementById('pass-to-target').textContent = t('pass_to_name_fmt', { name });
+  document.getElementById('show-role-text').textContent = t('im_show_role_fmt', { name: truncateStr(name, 14) });
+  renderProgressDots();
+  showScreen('pass');
+}
+
+/* ============================================================
+   PROGRESS DOTS
+   ============================================================ */
+function renderProgressDots() {
+  const g = state.game;
+  if (!g || !g.current) return;
+  const cur = g.current;
+  const total = g.playerCount;
+  const html = [];
+  for (let i = 0; i < total; i++) {
+    let cls = 'dot';
+    if (i < cur.seenIndex) cls += ' done';
+    else if (i === cur.seenIndex) cls += ' current';
+    html.push('<div class="' + cls + '"></div>');
+  }
+  const dotsHtml = html.join('');
+  const passDots = document.getElementById('pass-dots');
+  if (passDots) passDots.innerHTML = dotsHtml;
+  const roleDots = document.getElementById('role-dots');
+  if (roleDots) roleDots.innerHTML = dotsHtml;
+}
+
+/* ============================================================
+   ROLE PHASE (with 3D flip)
+   ============================================================ */
+function showRole() {
+  const g = state.game;
+  const cur = g.current;
+  const playerNum = cur.order[cur.seenIndex];
+  const isImposter = cur.imposters.includes(playerNum);
+  const showAsImposter = cur.isChaos ? true : isImposter;
+  const hintsOn = g.hintsEnabled;
+  let backHtml = '';
+  if (showAsImposter) {
+    if (hintsOn) {
+      backHtml = '<div class="role-card imposter">' +
+        '<div class="role-label">' + escapeHtml(t('you_are_imposter')) + '</div>' +
+        '<div class="role-title">' + escapeHtml(t('imposter')) + '</div>' +
+        '<div class="word-box"><div class="hint-label">' + escapeHtml(t('your_hint')) + '</div>' +
+        '<div class="word-big">' + escapeHtml(cur.hint) + '</div></div>' +
+        '<p class="reminder">' + escapeHtml(t('reminder_imposter')) + '</p></div>';
+    } else {
+      backHtml = '<div class="role-card imposter">' +
+        '<div class="role-label">' + escapeHtml(t('you_are_imposter')) + '</div>' +
+        '<div class="role-title">' + escapeHtml(t('imposter')) + '</div>' +
+        '<p class="reminder">' + escapeHtml(t('reminder_imposter')) + '</p></div>';
+    }
+  } else {
+    backHtml = '<div class="role-card civilian">' +
+      '<div class="role-label">' + escapeHtml(t('you_are_civilian')) + '</div>' +
+      '<div class="role-title">' + escapeHtml(t('civilian')) + '</div>' +
+      '<div class="word-box"><div class="secret-label">' + escapeHtml(t('secret_word')) + '</div>' +
+      '<div class="word-big">' + escapeHtml(cur.word) + '</div></div>' +
+      '<p class="reminder">' + escapeHtml(t('reminder_civilian')) + '</p></div>';
+  }
+  const content = document.getElementById('role-content');
+  content.innerHTML =
+    '<div class="flip-container" id="flip-container" role="button" tabindex="0" aria-label="' + escapeHtml(t('tap_reveal')) + '">' +
+      '<div class="flip-inner">' +
+        '<div class="flip-front">' +
+          '<div class="question-mark">?</div>' +
+          '<div class="tap-hint">' + escapeHtml(t('tap_reveal')) + '</div>' +
+        '</div>' +
+        '<div class="flip-back">' + backHtml + '</div>' +
+      '</div>' +
+    '</div>';
+  state.roleFlipped = false;
+  const btn = document.getElementById('btn-hide-pass');
+  btn.disabled = true;
+  btn.textContent = (cur.seenIndex + 1 >= g.playerCount) ? t('start_discussion') : t('hide_pass');
+  const flipContainer = document.getElementById('flip-container');
+  const doFlip = () => {
+    if (!flipContainer.classList.contains('flipped')) {
+      flipContainer.classList.add('flipped');
+      state.roleFlipped = true;
+      btn.disabled = false;
+    }
+  };
+  flipContainer.addEventListener('click', doFlip);
+  flipContainer.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); doFlip(); }
+  });
+  const total = g.playerCount;
+  document.getElementById('role-progress').textContent =
+    t('players_seen_fmt', { x: cur.seenIndex + 1, n: total });
+  renderProgressDots();
+  showScreen('role');
+}
+
+/* ============================================================
+   CLUE / TIMER
+   ============================================================ */
+let timerInterval = null;
+let timerRemaining = 0;
+let timerRunning = false;
+let timerFinished = false;
+
+function startCluePhase() {
+  const g = state.game;
+  const cur = g.current;
+  const orderEl = document.getElementById('clue-order');
+  orderEl.innerHTML = '';
+  cur.order.forEach((p, i) => {
+    const chip = document.createElement('div');
+    chip.className = 'order-chip';
+    chip.textContent = (i + 1) + '. ' + shortName(p, 14);
+    orderEl.appendChild(chip);
+  });
+  const timerCard = document.getElementById('timer-card');
+  const voteWrap = document.getElementById('clue-vote-wrap');
+  if (g.discussionTimer === 0) {
+    timerCard.style.display = 'none';
+    voteWrap.style.display = '';
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    timerRunning = false; timerFinished = false; timerRemaining = 0;
+    updateTimerDisplay();
+  } else {
+    timerCard.style.display = '';
+    timerRemaining = g.discussionTimer;
+    timerRunning = false; timerFinished = false;
+    updateTimerDisplay();
+    const toggleBtn = document.getElementById('btn-timer-toggle');
+    toggleBtn.textContent = t('start');
+    toggleBtn.disabled = false;
+    voteWrap.style.display = 'none';
+  }
+  showScreen('clue');
+}
+function fmtTime(s) {
+  const m = Math.floor(s / 60);
+  const sec = s % 60;
+  return m + ':' + sec.toString().padStart(2, '0');
+}
+function updateTimerDisplay() {
+  const el = document.getElementById('timer-display');
+  el.textContent = fmtTime(Math.max(0, timerRemaining));
+  el.classList.remove('warn','danger');
+  if (timerRemaining <= 10 && timerRemaining > 0) el.classList.add('danger');
+  else if (timerRemaining <= 30 && timerRemaining > 0) el.classList.add('warn');
+}
+function startTimer() {
+  if (timerInterval) clearInterval(timerInterval);
+  timerRunning = true;
+  document.getElementById('btn-timer-toggle').textContent = t('pause');
+  timerInterval = setInterval(() => {
+    timerRemaining--;
+    updateTimerDisplay();
+    if (timerRemaining <= 0) finishTimer();
+  }, 1000);
+}
+function pauseTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  timerRunning = false;
+  document.getElementById('btn-timer-toggle').textContent = t('resume');
+}
+function finishTimer() {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  timerRunning = false; timerFinished = true; timerRemaining = 0;
+  updateTimerDisplay();
+  const toggleBtn = document.getElementById('btn-timer-toggle');
+  toggleBtn.textContent = t('done');
+  toggleBtn.disabled = true;
+  document.getElementById('clue-vote-wrap').style.display = '';
+}
+
+/* ============================================================
+   VOTING
+   ============================================================ */
+let voteSelection = null;
+function startVoting() {
+  const g = state.game;
+  const grid = document.getElementById('vote-grid');
+  grid.innerHTML = '';
+  voteSelection = null;
+  document.getElementById('vote-instruction').textContent = t('tap_voted');
+  for (let i = 1; i <= g.playerCount; i++) {
+    const b = document.createElement('button');
+    b.className = 'vote-btn';
+    b.type = 'button';
+    b.textContent = shortName(i, 14);
+    b.dataset.player = i;
+    b.title = playerName(i);
+    b.addEventListener('click', () => selectVote(i, b));
+    grid.appendChild(b);
+  }
+  document.getElementById('confirm-wrap').style.display = 'none';
+  document.getElementById('btn-vote-nobody').style.display = '';
+  showScreen('vote');
+}
+function selectVote(playerNum, btn) {
+  voteSelection = playerNum;
+  document.querySelectorAll('#vote-grid .vote-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('confirm-text').textContent = t('vote_out_fmt', { name: playerName(playerNum) });
+  document.getElementById('confirm-wrap').style.display = '';
+  document.getElementById('btn-vote-nobody').style.display = 'none';
+}
+
+/* ============================================================
+   REVEAL
+   ============================================================ */
+function doReveal() {
+  const g = state.game;
+  const cur = g.current;
+  const content = document.getElementById('reveal-content');
+  if (cur.isChaos) {
+    const label = cur.imposters.length > 1 ? t('real_imposters_were') : t('real_imposter_was');
+    const names = imposterNamesStr(cur.imposters);
+    content.innerHTML =
+      '<div class="reveal-card chaos">' +
+        '<div class="chaos-label">' + escapeHtml(t('chaos_round')) + '</div>' +
+        '<div class="reveal-title">' + escapeHtml(t('chaos_everyone')) + '</div>' +
+        '<p class="muted" style="margin:0">' + escapeHtml(t('chaos_told')) + '</p>' +
+        '<p class="real-imposter-line">' + escapeHtml(label) + ' ' + escapeHtml(names) + '.</p>' +
+      '</div>' +
+      '<div class="word-reveal">' +
+        '<div class="item"><div class="lbl">' + escapeHtml(t('secret_word')) + '</div><div class="val" style="color:var(--olive-dark)">' + escapeHtml(cur.word) + '</div></div>' +
+        '<div class="item"><div class="lbl">' + escapeHtml(t('your_hint')) + '</div><div class="val" style="color:var(--chaos)">' + escapeHtml(cur.hint) + '</div></div>' +
+      '</div>' +
+      '<p class="chaos-note">' + escapeHtml(t('chaos_no_points')) + '</p>';
+    document.getElementById('civ-score').textContent = g.scores.civ;
+    document.getElementById('imp-score').textContent = g.scores.imp;
+    showScreen('reveal');
+    return;
+  }
+  const votedPlayer = voteSelection;
+  const nobody = votedPlayer === null;
+  const votedIsImposter = votedPlayer !== null && cur.imposters.includes(votedPlayer);
+  const civWin = votedIsImposter;
+  if (civWin) g.scores.civ++; else g.scores.imp++;
+  let headline, sub;
+  if (nobody) {
+    headline = t('nobody_voted_out');
+    sub = t('imposters_win_round');
+  } else if (votedIsImposter) {
+    headline = t('was_imposter_fmt', { name: playerName(votedPlayer) });
+    sub = t('civilians_win_round');
+  } else {
+    headline = t('was_civilian_fmt', { name: playerName(votedPlayer) });
+    sub = t('imposters_win_round');
+  }
+  const cardClass = civWin ? 'civ-win' : 'imp-win';
+  const impLabel = cur.imposters.length > 1 ? t('imposters_were_label') : t('imposter_was_label');
+  content.innerHTML =
+    '<div class="reveal-card ' + cardClass + '">' +
+      '<div class="reveal-title">' + escapeHtml(headline) + '</div>' +
+      '<p class="muted" style="margin:0">' + escapeHtml(sub) + '</p>' +
+    '</div>' +
+    '<div class="word-reveal">' +
+      '<div class="item"><div class="lbl">' + escapeHtml(t('secret_word')) + '</div><div class="val" style="color:var(--olive-dark)">' + escapeHtml(cur.word) + '</div></div>' +
+      '<div class="item"><div class="lbl">' + escapeHtml(t('your_hint')) + '</div><div class="val" style="color:var(--danger)">' + escapeHtml(cur.hint) + '</div></div>' +
+    '</div>' +
+    '<p class="imposter-list">' + escapeHtml(impLabel) + ': ' + escapeHtml(imposterNamesStr(cur.imposters)) + '</p>';
+  document.getElementById('civ-score').textContent = g.scores.civ;
+  document.getElementById('imp-score').textContent = g.scores.imp;
+  showScreen('reveal');
+}
+
+/* ============================================================
+   GAME OVER
+   ============================================================ */
+function endGame() {
+  const g = state.game;
+  const civWins = g.scores.civ > g.scores.imp;
+  const tie = g.scores.civ === g.scores.imp;
+  document.getElementById('gameover-title').textContent =
+    tie ? t('its_tie') : (civWins ? t('civilians_win') : t('imposters_win'));
+  const roundsWord = g.round === 1 ? t('round_singular') : t('round_plural');
+  document.getElementById('gameover-sub').textContent =
+    t('rounds_played_fmt', { civ: g.scores.civ, imp: g.scores.imp, rounds: g.round, roundsWord });
+  document.getElementById('final-civ').textContent = g.scores.civ;
+  document.getElementById('final-imp').textContent = g.scores.imp;
+  showScreen('gameover');
+}
+
+/* ============================================================
+   UTIL
+   ============================================================ */
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+function clearRoleContent() {
+  const el = document.getElementById('role-content');
+  if (el) el.innerHTML = '';
+}
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+let confirmCallback = null;
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function confirmDialog(title, body, onOk) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-body').textContent = body;
+  confirmCallback = onOk;
+  openModal('modal-confirm');
+}
+
+/* ============================================================
+   EVENT BINDINGS
+   ============================================================ */
+document.getElementById('players-minus').addEventListener('click', () => setPlayerCount(-1));
+document.getElementById('players-plus').addEventListener('click', () => setPlayerCount(1));
+document.getElementById('imposter-segmented').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b || b.disabled) return;
+  state.settings.imposterCount = parseInt(b.dataset.imp, 10);
+  renderSetup(); saveSettings();
+});
+document.getElementById('timer-segmented').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  state.settings.discussionTimer = parseInt(b.dataset.time, 10);
+  renderSetup(); saveSettings();
+});
+document.getElementById('category-segmented').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  state.settings.category = b.dataset.cat;
+  renderSetup(); saveSettings();
+});
+document.querySelectorAll('.toggle').forEach(tg => {
+  tg.addEventListener('click', () => {
+    const key = tg.dataset.toggle;
+    const next = !(tg.getAttribute('aria-checked') === 'true');
+    tg.setAttribute('aria-checked', String(next));
+    state.settings[key] = next;
+    saveSettings();
+  });
+});
+document.querySelectorAll('.lang-toggle button').forEach(b => {
+  b.addEventListener('click', () => changeLanguage(b.dataset.lang));
+});
+document.getElementById('names-trigger').addEventListener('click', () => {
+  const c = document.getElementById('names-collapsible');
+  const tr = document.getElementById('names-trigger');
+  const isOpen = c.classList.toggle('open');
+  tr.setAttribute('aria-expanded', String(isOpen));
+});
+document.getElementById('btn-start').addEventListener('click', startGame);
+document.getElementById('btn-howto').addEventListener('click', () => openModal('modal-howto'));
+document.getElementById('btn-howto-close').addEventListener('click', () => closeModal('modal-howto'));
+document.getElementById('btn-show-role').addEventListener('click', showRole);
+document.getElementById('btn-hide-pass').addEventListener('click', () => {
+  clearRoleContent(); // CRITICAL: clear secret from DOM first
+  const g = state.game;
+  const cur = g.current;
+  cur.seenIndex++;
+  state.roleFlipped = false;
+  if (cur.seenIndex >= g.playerCount) startCluePhase();
+  else startPassPhase();
+});
+document.getElementById('btn-timer-toggle').addEventListener('click', () => {
+  if (timerFinished) return;
+  if (timerRunning) pauseTimer(); else startTimer();
+});
+document.getElementById('btn-timer-skip').addEventListener('click', finishTimer);
+document.getElementById('btn-go-vote').addEventListener('click', () => {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  startVoting();
+});
+document.getElementById('btn-vote-nobody').addEventListener('click', () => {
+  voteSelection = null;
+  document.querySelectorAll('#vote-grid .vote-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('confirm-text').textContent = t('nobody_reveal');
+  document.getElementById('confirm-wrap').style.display = '';
+  document.getElementById('btn-vote-nobody').style.display = 'none';
+});
+document.getElementById('btn-confirm-cancel').addEventListener('click', () => {
+  voteSelection = null;
+  document.querySelectorAll('#vote-grid .vote-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('confirm-wrap').style.display = 'none';
+  document.getElementById('btn-vote-nobody').style.display = '';
+});
+document.getElementById('btn-confirm-reveal').addEventListener('click', doReveal);
+document.getElementById('btn-next-round').addEventListener('click', () => {
+  state.game.round++;
+  beginRound();
+});
+document.getElementById('btn-end-game').addEventListener('click', endGame);
+document.getElementById('btn-play-again').addEventListener('click', () => {
+  clearRoleContent();
+  state.game = null;
+  state.prevWord = null;
+  state.prevImposters = [];
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  showScreen('setup');
+});
+document.addEventListener('click', e => {
+  const q = e.target.closest('[data-quit]');
+  if (!q) return;
+  confirmDialog(t('quit_game'), t('quit_body'), () => {
+    clearRoleContent();
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+    state.game = null;
+    state.prevWord = null;
+    state.prevImposters = [];
+    showScreen('setup');
+  });
+});
+document.getElementById('btn-modal-cancel').addEventListener('click', () => {
+  confirmCallback = null;
+  closeModal('modal-confirm');
+});
+document.getElementById('btn-modal-ok').addEventListener('click', () => {
+  const cb = confirmCallback;
+  confirmCallback = null;
+  closeModal('modal-confirm');
+  if (cb) cb();
+});
+document.querySelectorAll('.modal-backdrop').forEach(b => {
+  b.addEventListener('click', e => {
+    if (e.target === b) {
+      b.classList.remove('active');
+      confirmCallback = null;
+    }
+  });
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+loadSettings();
+applyTranslations();
+renderSetup();
+renderPlayerNames();
+updateLangToggle();
+showScreen('setup');
+</script>
+</body>
+</html>
